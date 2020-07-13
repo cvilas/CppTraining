@@ -14,15 +14,64 @@
 
 #include <cstdlib>
 #include <iostream>
-
+#include <memory>
 
 //--Function.h-------------------------------------------------------------------------------------
 
 template< typename Fn >
 class Function;
 
-// TODO
+// specialisation for function types - called if Fn above is function type
+template<typename R, typename... Args>
+class Function<R(Args...)>
+{
+public:
+	template<typename Fn>
+	Function(Fn fn) : pimpl{ std::make_unique<Model<Fn>>(fn) }
+	{}
+	~Function() = default;
+	Function(Function&&) = default;
+	Function& operator=(Function&&) = default;
 
+	Function(const Function& f) 
+		: pimpl{f.pimpl->clone()} {
+
+	}
+	
+	Function& operator=(const Function& f)
+	{
+		using std::swap;// prefer an unqualified call to swap
+		// Temporary swap idiom
+		Function tmp(f);
+		swap(pimpl, tmp.pimpl);
+		return *this;
+	}
+
+	R operator()(Args... args) const { return pimpl->invoke(args...); }
+private:
+	// Hiding an inheritance based polymorphism here so that our users don't have to deal with the complexity of callables. And we apply a requirement that 
+	// it be a callable by defining the class Function the way we have. We achieve type erasure by hiding it here in 
+    // the private section
+    
+    // Concept sets requirements for the callable
+	struct Concept
+	{
+		virtual ~Concept() = default;
+		virtual R invoke(Args...) const = 0;
+		virtual std::unique_ptr<Concept> clone() const = 0;
+	};
+
+	template< typename Fn>
+	struct Model : public Concept
+	{
+		Model(Fn f) : fn(f){}
+		R invoke(Args... args) const override { return fn(args...); }
+		std::unique_ptr<Concept> clone() const override {return std::make_unique<Model>(*this);}
+		Fn fn;
+	};
+
+	std::unique_ptr<Concept> pimpl;	
+};
 
 //--Main.cpp---------------------------------------------------------------------------------------
 
@@ -41,7 +90,6 @@ struct Foo {
 
 int main()
 {
-   /*
    {
       Function<int(void)> f( foo );
       auto const res = f();
@@ -59,7 +107,6 @@ int main()
       auto const res = f();
       std::cerr << "\n res = " << res << "\n\n";
    }
-   */
 
    return EXIT_SUCCESS;
 }
