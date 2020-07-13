@@ -25,11 +25,16 @@
 /// - No dynamic memory allocation (unique_ptr is removed)
 /// - Value semantics rather than pointer semantics. Easy to reason about in terms of determinism and behaviour
 /// - Lots of code erased. Very few additions
-/// - Follows open-close principle on both types as well as functions. No couplings:
-///         - Types don't need to know each other. 
-///         - Draw() does not need to know all types. 
-///         - Third parties or customers can extend existing implementation without recompile, and without breaking existing code.
-/// - Performance overhead: Very acceptable compromise with inflexible enum-based implementation.
+/// - Follows single responsibility principle
+/// - Follows open-close principle on functionality but not types. No couplings:
+///         - Can't extend to new types without a recompile, although types don't need to know each other. 
+///         - Third parties or customers can extend existing functions without recompile, and without breaking existing code.
+/// - Performance overhead: std::variant is slower but an acceptable compromise compared to inflexible enum-based implementation.
+///
+/// Disadvantages:
+/// - Requires  closed set of known types. Use to extend functionality, not types
+/// - Abstraction across architecture boundaries
+/// - not best performance.
 
 class Circle;
 class Square;
