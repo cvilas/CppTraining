@@ -8,7 +8,9 @@ work with deep copies. You always know the state.
 
 - TODO: Review rule of 6 (CppCoreGuideline 21) - if you define one, you should define all.
 - TODO: Review SOLID principles.
-    - Single responsibility principle (SRP) is performing a cohesive set of things; it is *not* about doing just one thing.
+    - (S)ingle responsibility principle (SRP) is performing a cohesive set of things; it is *not* about doing just one thing.
+    - (L)iskov; Substitutability: Contravariant function arguments, covariant rerturn types. Find out what this means.
+    - (D)ependency *inversion* (not injection) principle. Learn what this is.
 - TODO: Understand decltype(auto) vs auto for return type
 - TODO: Review how Type erasure works in the expression templates. This is the meat of the workshop
 - TODO: Review how all design patterns are implemented in modern c++ in the given exercises
